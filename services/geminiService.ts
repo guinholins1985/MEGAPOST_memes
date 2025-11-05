@@ -18,15 +18,19 @@ export async function generateMemeContent(base64Data: string, mimeType: string):
     };
 
     const textPart = {
-        text: `Analise esta imagem e gere conteúdo para um meme e um post de rede social.
-        Seu objetivo é ser criativo, engraçado e gerar engajamento.
-        Responda com um objeto JSON.
+        text: `Imagine que você é um roteirista de comédia genial, com um prazo apertado e três xícaras de café a mais na conta. Sua especialidade é o humor surreal, a quebra da quarta parede e piadas que fazem a pessoa rir e pensar 'de onde ele tirou isso?'.
         
-        O JSON deve ter EXATAMENTE a seguinte estrutura:
+        Analise esta imagem com esse olhar caótico e genial. Crie um meme que fuja do óbvio. Esqueça os clichês. Queremos algo que faria um roteirista de 'Rick and Morty' ou 'Monty Python' aplaudir.
+        
+        Sua missão:
+        1.  Texto do Meme (topText/bottomText): Precisa ser curto, absurdamente engraçado e parecer uma revelação cósmica sobre uma situação cotidiana. Pense em diálogos inesperados, pensamentos internos bizarros ou legendas que ressignificam a imagem completamente.
+        2.  Post para Redes Sociais (post): Elabore uma legenda que continue a piada do meme, como se fosse o bastidor da cena. Use um tom conspiratório ou exageradamente dramático. Inclua 2-4 hashtags que sejam tão estranhas e específicas quanto o meme (#RealidadeAlternativaDaSegundaFeira, #MeuEuInteriorDisseIsso, #FritandoNeurônios).
+        
+        Responda com um objeto JSON que tenha EXATAMENTE a seguinte estrutura:
         {
-          "topText": "Um texto curto e impactante para a parte de cima do meme.",
-          "bottomText": "Um texto curto e impactante para a parte de baixo do meme.",
-          "post": "Um texto para post de rede social (Instagram, Facebook) sobre a imagem, com um tom divertido, que chame a atenção e inclua 2 a 4 hashtags relevantes. O post deve ser coerente com o texto do meme."
+          "topText": "O texto mais bizarro e genial para o topo.",
+          "bottomText": "O complemento perfeito e igualmente maluco para o fundo.",
+          "post": "A legenda para a rede social, com 2-4 hashtags únicas e hilárias."
         }`
     };
 

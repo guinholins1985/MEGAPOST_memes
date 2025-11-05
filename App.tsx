@@ -33,7 +33,7 @@ export default function App() {
       setJustGenerated(true);
       setTimeout(() => setJustGenerated(false), 1500);
     } catch (err) {
-      setError('Falha ao gerar o conteúdo com IA. Tente outra imagem ou gere novamente.');
+      setError('A IA tropeçou na criatividade. Tente outra imagem ou gere novamente.');
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -68,39 +68,52 @@ export default function App() {
   const handleDownloadClick = () => {
     if (!imageSrc) return;
 
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
     const img = new Image();
     img.crossOrigin = 'anonymous';
     img.src = imageSrc;
     img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      
+      const barHeightRatio = 0.20; // Each bar is 20% of the image's height
+      const barHeight = img.height * barHeightRatio;
+      
       canvas.width = img.width;
-      canvas.height = img.height;
-      ctx.drawImage(img, 0, 0);
+      canvas.height = img.height + (2 * barHeight);
 
-      const fontSize = img.width / 8; // Increased for more impact
-      ctx.font = `${fontSize}px Anton, sans-serif`;
+      // 1. Fill background with black
+      ctx.fillStyle = 'black';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // 2. Draw the image in the middle
+      ctx.drawImage(img, 0, barHeight, img.width, img.height);
+
+      // 3. Prepare text styling for the bars
+      const fontSize = barHeight * 0.8; // Font is 80% of the bar's height
+      ctx.font = `bold ${fontSize}px Anton, sans-serif`;
       ctx.fillStyle = 'white';
-      ctx.strokeStyle = 'black';
-      ctx.lineWidth = fontSize / 12; // Increased for thicker outline
       ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      
+      // Classic meme text outline
+      ctx.strokeStyle = 'black';
+      ctx.lineWidth = fontSize * 0.1; // Stroke width is 10% of font size
+      
+      const maxWidth = canvas.width * 0.95; // Max text width
 
-      // Top text
-      ctx.textBaseline = 'top';
-      const topY = 20; // Added padding
-      ctx.strokeText(topText.toUpperCase(), canvas.width / 2, topY);
-      ctx.fillText(topText.toUpperCase(), canvas.width / 2, topY);
+      // 4. Draw Top text (outline then fill)
+      ctx.strokeText(topText.toUpperCase(), canvas.width / 2, barHeight / 2, maxWidth);
+      ctx.fillText(topText.toUpperCase(), canvas.width / 2, barHeight / 2, maxWidth);
 
-      // Bottom text
-      ctx.textBaseline = 'bottom';
-      const bottomY = canvas.height - 20; // Added padding
-      ctx.strokeText(bottomText.toUpperCase(), canvas.width / 2, bottomY);
-      ctx.fillText(bottomText.toUpperCase(), canvas.width / 2, bottomY);
-
+      // 5. Draw Bottom text (outline then fill)
+      const bottomBarCenterY = canvas.height - (barHeight / 2);
+      ctx.strokeText(bottomText.toUpperCase(), canvas.width / 2, bottomBarCenterY, maxWidth);
+      ctx.fillText(bottomText.toUpperCase(), canvas.width / 2, bottomBarCenterY, maxWidth);
+      
+      // 6. Trigger download
       const link = document.createElement('a');
-      link.download = 'meme.png';
+      link.download = 'meme-gerado.png';
       link.href = canvas.toDataURL('image/png');
       link.click();
     };
@@ -112,7 +125,7 @@ export default function App() {
         <h1 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-600">
           Gerador de Memes IA
         </h1>
-        <p className="text-gray-400 mt-2 text-lg">Crie e impulsione seu conteúdo viral</p>
+        <p className="text-gray-400 mt-2 text-lg">Transforme imagens em ouro viral com humor de outro nível</p>
       </header>
 
       <main className="flex-grow grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -144,7 +157,7 @@ export default function App() {
                 type="text"
                 value={topText}
                 onChange={(e) => setTopText(e.target.value)}
-                placeholder={isLoading ? "Analisando imagem..." : "Texto de cima"}
+                placeholder={isLoading ? "Invocando a criatividade..." : "Texto de cima"}
                 className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 disabled={isLoading}
               />
@@ -154,7 +167,7 @@ export default function App() {
                 type="text"
                 value={bottomText}
                 onChange={(e) => setBottomText(e.target.value)}
-                placeholder={isLoading ? "Analisando imagem..." : "Texto de baixo"}
+                placeholder={isLoading ? "Invocando a criatividade..." : "Texto de baixo"}
                 className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 disabled={isLoading}
               />
@@ -166,7 +179,7 @@ export default function App() {
             className="w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded-lg transition-transform transform hover:scale-105 disabled:bg-gray-500 disabled:cursor-not-allowed"
           >
             {isLoading ? <SpinnerIcon /> : <SparklesIcon />}
-            {isLoading ? 'Gerando...' : 'Gerar Novamente'}
+            {isLoading ? 'Gerando...' : 'Surpreenda-me!'}
           </button>
           
           {error && <p className="text-red-400 text-center">{error}</p>}
@@ -193,7 +206,7 @@ export default function App() {
             {isLoading ? (
               <div className="flex flex-col justify-center items-center h-full text-center">
                 <SpinnerIcon />
-                <p className="text-gray-400 animate-pulse mt-2">A IA está analisando sua imagem e criando o conteúdo...</p>
+                <p className="text-gray-400 animate-pulse mt-2">Misturando humor e caos para a legenda perfeita...</p>
               </div>
             ) : (
               <div 
@@ -201,7 +214,7 @@ export default function App() {
                 title="Clique para copiar"
                 onClick={() => generatedPost && navigator.clipboard.writeText(generatedPost)}
               >
-                {generatedPost || <span className="text-gray-500">Sua legenda aparecerá aqui...</span>}
+                {generatedPost || <span className="text-gray-500">Sua legenda ultra criativa aparecerá aqui...</span>}
               </div>
             )}
           </div>
